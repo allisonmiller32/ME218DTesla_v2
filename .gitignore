@@ -1,0 +1,17 @@
+*.o
+*.d
+*.crf
+*.Allie
+*.uvopt
+*.uvgui
+*.dep
+*.bin
+*.htm
+*.lnp
+*.map
+*.sct
+*.axf
+*.uvoptx
+*.uvproj
+*.saved_uv4
+*.uvprojx
