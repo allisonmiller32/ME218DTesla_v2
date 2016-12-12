@@ -52,10 +52,10 @@ void InitAll(void) {
 	PortFunctionInit();
 	InitPorts();
 	InitMotors();
-//	InitCAN();
+	InitCAN();
+	InitEncoders();
 	PWM0_Init();
 	PWM1_Init();
-	InitEncoders();
 	
 	ADC_MultiInit(AD_HOW_MANY);
 }

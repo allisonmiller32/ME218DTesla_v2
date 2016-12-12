@@ -53,7 +53,7 @@ void PWM0_Init(void)
 	// disable the PWM while initializing
 	HWREG( PWM0_BASE+PWM_O_0_CTL ) = 0;
 	// program generator A to go to 1 at rising compare A, 0 on falling compare A
-	HWREG( PWM0_BASE+PWM_O_0_GENA) =
+	HWREG(PWM0_BASE+PWM_O_0_GENA) =
 	(PWM_0_GENA_ACTCMPAU_ONE | PWM_0_GENA_ACTCMPAD_ZERO );
 	// Set the PWM period. Since we are counting both up & down, we initialize
 	// the load register to 1/2 the desired total period. We will also program
@@ -67,10 +67,11 @@ void PWM0_Init(void)
 	// enable the PWM outputs
 	HWREG( PWM0_BASE+PWM_O_ENABLE) |= (PWM_ENABLE_PWM0EN);
 	// now configure the Port B pins to be PWM outputs
-	// start by selecting the alternate function for PB6 & 7
+	// start by selecting the alternate function for PB6
 	HWREG(GPIO_PORTB_BASE+GPIO_O_AFSEL) |= ( BIT6HI);
+	HWREG(GPIO_PORTD_BASE+GPIO_O_AFSEL) &= 0;
 	// now choose to map PWM to those pins, this is a mux value of 4 that we
-	// want to use for specifying the function on bits 6 & 7
+	// want to use for specifying the function on bits 6 
 	HWREG(GPIO_PORTB_BASE+GPIO_O_PCTL) =
 	(HWREG(GPIO_PORTB_BASE+GPIO_O_PCTL) & 0xf0fffff) +
 	(4<<(6*BitsPerNibble));
@@ -101,21 +102,21 @@ void PWM1_Init(void)
 	HWREG( PWM0_BASE+PWM_O_1_CTL ) = 0;
 	// program generator A to go to 1 at rising compare A, 0 on falling compare A
 	HWREG( PWM0_BASE+PWM_O_1_GENA) =
-	(PWM_1_GENA_ACTCMPAU_ONE | PWM_1_GENA_ACTCMPAD_ZERO );
+	(PWM_0_GENA_ACTCMPAU_ONE | PWM_0_GENA_ACTCMPAD_ZERO );
 	// Set the PWM period. Since we are counting both up & down, we initialize
 	// the load register to 1/2 the desired total period. We will also program
 	// the match compare registers to 1/2 the desired high time
 	HWREG( PWM0_BASE+PWM_O_1_LOAD) = ((PeriodInMS * PWMTicksPerMS)-1)>>1;
 	// Set the initial Duty cycle on A to 0%
 	PWM1_SetDuty(0);
-	HWREG( PWM0_BASE+PWM_O_1_CMPB) = HWREG( PWM0_BASE+PWM_O_1_LOAD)>>1;
+	HWREG( PWM0_BASE+PWM_O_1_CMPA) = HWREG( PWM0_BASE+PWM_O_1_LOAD)>>1;
 	// enable the PWM outputs
-	HWREG( PWM0_BASE+PWM_O_ENABLE) |= (PWM_ENABLE_PWM3EN | PWM_ENABLE_PWM2EN);
+	HWREG( PWM0_BASE+PWM_O_ENABLE) |= (PWM_ENABLE_PWM2EN);
 	// now configure the Port B pins to be PWM outputs
-	// start by selecting the alternate function for PB4 & 5
+	// start by selecting the alternate function for PB4
 	HWREG(GPIO_PORTB_BASE+GPIO_O_AFSEL) |= (BIT4HI);
 	// now choose to map PWM to those pins, this is a mux value of 4 that we
-	// want to use for specifying the function on bits 4 & 5
+	// want to use for specifying the function on bits 4
 	HWREG(GPIO_PORTB_BASE+GPIO_O_PCTL) =
 	(HWREG(GPIO_PORTB_BASE+GPIO_O_PCTL) & 0xff0ffff) + (4<<(4*BitsPerNibble));
 	// Enable pins 4 on Port B for digital I/O
@@ -127,6 +128,7 @@ void PWM1_Init(void)
 	HWREG(PWM0_BASE+ PWM_O_1_CTL) = (PWM_1_CTL_MODE | PWM_1_CTL_ENABLE |
 	PWM_1_CTL_GENAUPD_LS | PWM_1_CTL_GENBUPD_LS);
 }
+
 
 void PWM0_SetDuty(uint8_t Duty)
 {

@@ -41,7 +41,11 @@
 
 #include "PWM0_Tiva.h"
 #include "Motors.h"
-
+#include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
+#include "inc/hw_memmap.h"
+#include "inc/hw_types.h"
+#include "inc/hw_gpio.h"
 // This is the event checking function sample. It is not intended to be 
 // included in the module. It is only here as a sample to guide you in writing
 // your own event checkers
@@ -138,11 +142,11 @@ bool Check4Keystroke(void)
 		
 		// Ernesto
 		else if(key == '1'){
-			PWM0_SetDuty(50);
+			PWM1_SetDuty(50);
 			printf("Motor Duty: 50 percent\n\r");
 		}
 		else if(key == '2'){
-			PWM0_SetDuty(0);
+			PWM1_SetDuty(0);
 			printf("Motor Duty: 0 percent\n\r");
 		}
 		else if(key == '3'){
@@ -161,9 +165,9 @@ bool Check4Keystroke(void)
 			Motor1Direction(MOTOR1_REVERSE);
 			printf("Motor Direction: Reverse\n\r");
 		}
-//		else if(key == '7'){
-//			Motor1Enable(false);
-//		}
+		else if(key == '7'){
+			printf("AFS for Port D = %x",HWREG(GPIO_PORTD_BASE+GPIO_O_AFSEL));
+		}
 //		else if(key == '8'){
 //			Motor1Enable(false);
 //		}		

@@ -131,13 +131,13 @@ void InitEncoders( void )
 	// start by setting the alternate function for Port C bit 4 (WT0CCP0)
 	// and Port C bit 5 (WT0CCP0)
 	HWREG(GPIO_PORTC_BASE+GPIO_O_AFSEL) |= (BIT4HI|BIT5HI|BIT6HI|BIT7HI);
-	//HWREG(GPIO_PORTD_BASE+GPIO_O_AFSEL) |= (BIT0HI|BIT1HI);
+	HWREG(GPIO_PORTD_BASE+GPIO_O_AFSEL) = 0;
 	
 	// Then, map bit 4's alternate function to WT0CCP0
 	// 7 is the mux value to select WT0CCP0, 16 to shift it over to the
 	// right nibble for bit 4 (4 bits/nibble * 4 bits)
 	HWREG(GPIO_PORTC_BASE+GPIO_O_PCTL) = (HWREG(GPIO_PORTC_BASE+GPIO_O_PCTL) & 0x0000ffff) + (7<<16) + (7<<20) + (7<<24) + (7<<28);
-	//HWREG(GPIO_PORTD_BASE+GPIO_O_PCTL) = (HWREG(GPIO_PORTC_BASE+GPIO_O_PCTL) & 0xffffff00) + (4<<0) +(4<<4);
+	HWREG(GPIO_PORTD_BASE+GPIO_O_PCTL) = (HWREG(GPIO_PORTD_BASE+GPIO_O_PCTL) | 0xffffffff); // Added to try and fix the PWM0 output on PD0
 
 	// Enable pins on Port C for digital I/O
 	HWREG(GPIO_PORTC_BASE+GPIO_O_DEN) |= (BIT4HI | BIT5HI | BIT6HI | BIT7HI);
