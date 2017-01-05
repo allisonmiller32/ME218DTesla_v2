@@ -263,6 +263,12 @@ typedef enum {  ES_NO_EVENT = 0,
 								ES_SPINNING,
 								ES_TESTING_MODE_BUTTON,
 								ES_MOTORS_ZEROED,
+								ES_LIMIT_SWITCH_HIT,
+								ES_MAX_TRAVEL_LIMIT_HIT,
+								ES_MIN_TRAVEL_LIMIT_HIT,
+								ES_MOTOR_BUTTON_UP,
+								ES_MOTOR_FORWARD_DOWN,
+								ES_MOTOR_BACKWARD_DOWN,
                 ES_LOCK,
                 ES_UNLOCK} ES_EventTyp_t ;
 

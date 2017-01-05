@@ -116,6 +116,7 @@ bool Check4Keystroke(void)
 //    ThisEvent.EventParam = GetNewKey();
 		char key = GetNewKey();
 		ES_Event KeyboardEvent;
+		/* Events used in MasterHSM */
 		if(key == 'c'){
 			KeyboardEvent.EventType = ES_CALIBRATING_MODE_BUTTON;
 			PostMasterSM(KeyboardEvent);
@@ -133,6 +134,26 @@ bool Check4Keystroke(void)
 			PostMasterSM(KeyboardEvent);
 		} else if(key == 's'){
 			KeyboardEvent.EventType = ES_SPINNING;
+			PostMasterSM(KeyboardEvent);
+		} 
+		/*Events used in TestingHSM */
+			else if(key == 'a'){
+			KeyboardEvent.EventType = ES_LIMIT_SWITCH_HIT;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'b'){
+			KeyboardEvent.EventType = ES_MAX_TRAVEL_LIMIT_HIT;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'd'){
+			KeyboardEvent.EventType = ES_MIN_TRAVEL_LIMIT_HIT;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'f'){
+			KeyboardEvent.EventType = ES_MOTOR_BUTTON_UP;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'g'){
+			KeyboardEvent.EventType = ES_MOTOR_FORWARD_DOWN;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'h'){
+			KeyboardEvent.EventType = ES_MOTOR_BACKWARD_DOWN;
 			PostMasterSM(KeyboardEvent);
 		} 
 		

@@ -6,33 +6,22 @@
    2.0.1
 
  Description
-   This is a template file for implementing state machines.
+   -Controls the program flow during the testing state of the crimping machine.
+	 -The testing mode (TestingHSM) is activated from the WaitingForModeSelect state
+		in the MasterHSM by pressing the testing mode button.
+	 -The testing mode (TestingHSM) can be quit by pressing the exit button at any time.
+	 -TestingHSM only allows for one motor running at a time. Motor movement is
+	 controlled with forward/backward buttons, which must be pressed and held down
+	 for a motor to move.
 
  Notes
 
  History
  When           Who     What/Why
  -------------- ---     --------
- 02/07/13 21:00 jec      corrections to return variable (should have been
-                         ReturnEvent, not CurrentEvent) and several EV_xxx
-                         event names that were left over from the old version
- 02/08/12 09:56 jec      revisions for the Events and Services Framework Gen2
- 02/13/10 14:29 jec      revised Start and run to add new kind of entry function
-                         to make implementing history entry cleaner
- 02/13/10 12:29 jec      added NewEvent local variable to During function and
-                         comments about using either it or Event as the return
- 02/11/10 15:54 jec      more revised comments, removing last comment in during
-                         function that belongs in the run function
- 02/09/10 17:21 jec      updated comments about internal transitions on During funtion
- 02/18/09 10:14 jec      removed redundant call to RunLowerlevelSM in EV_Entry
-                         processing in During function
- 02/20/07 21:37 jec      converted to use enumerated type for events & states
- 02/13/05 19:38 jec      added support for self-transitions, reworked
-                         to eliminate repeated transition code
- 02/11/05 16:54 jec      converted to implment hierarchy explicitly
- 02/25/03 10:32 jec      converted to take a passed event parameter
- 02/18/99 10:19 jec      built template from MasterMachine.c
- 02/14/99 10:34 jec      Began Coding
+ 12/15/16  		  jec     Template obtained from Stanford/Ed Carryer
+ 01/05/17 1:40	amm			Template converted to implement testing mode structure
+
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/
 // Basic includes for a program using the Events and Services Framework
@@ -48,14 +37,14 @@
 // define constants for the states for this machine
 // and any other local defines
 
-#define ENTRY_STATE STATE_ONE_TESTING
+#define ENTRY_STATE ACCEPTING_USER_INPUT_STATE
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine, things like during
    functions, entry & exit functions.They should be functions relevant to the
    behavior of this state machine
 */
-static ES_Event DuringStateOne( ES_Event Event);
+static ES_Event DuringAcceptingUserInputState( ES_Event Event);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well
@@ -73,11 +62,12 @@ static TestingState_t CurrentState;
    ES_Event: an event to return
 
  Description
-   add your description here
+   Implementation of crimping machine's testing mode
  Notes
    uses nested switch/case to implement the machine.
  Author
    J. Edward Carryer, 2/11/05, 10:45AM
+	 Allison Miller,		1/5/17,	 1:44PM
 ****************************************************************************/
 ES_Event RunTestingSM( ES_Event CurrentEvent )
 {
@@ -88,34 +78,79 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
 
    switch ( CurrentState )
    {
-       case STATE_ONE_TESTING :       // If current state is state one
-				 puts("In STATE_ONE_TESTING in the run mode of TestingHSM.c (lower level SM)\r\n");
-         // Execute During function for state one. ES_ENTRY & ES_EXIT are
-         // processed here allow the lower level state machines to re-map
-         // or consume the event
-         CurrentEvent = DuringStateOne(CurrentEvent);
+       case ACCEPTING_USER_INPUT_STATE :       // If current state is state one
+				 puts("In ACCEPTING_USER_INPUT_STATE in the run mode of TestingHSM.c (lower level SM)\r\n");
+         /* Execute During function for ACCEPTING_USER_INPUT_STATE. ES_ENTRY & ES_EXIT are
+          processed here allow the lower level state machines to re-map
+          or consume the event
+				*/
+         CurrentEvent = DuringAcceptingUserInputState(CurrentEvent);
          //process any events
          if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_LOCK : //If event is event one
-                  // Execute action function for state one : event one
-                  NextState = STATE_TWO_TESTING;//Decide what the next state will be
-                  // for internal transitions, skip changing MakeTransition
-                  MakeTransition = true; //mark that we are taking a transition
-                  // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY;
-                  // optionally, consume or re-map this event for the upper
-                  // level state machine
+							/*The events (ES_LIMIT_SWITCH_HIT, ES_MAX_TRAVEL_LIMIT_HIT, ES_MIN_TRAVEL_LIMIT_HIT)
+							   occur if the motors move outside their allowed range (either optical limit switches are hit or encoder count goes out of allowable range).
+								 All of these events produce the same actions. Their case statements must be kept next to each other.
+							*/
+							case ES_LIMIT_SWITCH_HIT: 
+							case ES_MAX_TRAVEL_LIMIT_HIT:
+							case ES_MIN_TRAVEL_LIMIT_HIT:
+									puts("Switching ES_LIMIT_SWITCH_HIT, ES_MAX_TRAVEL_LIMIT_HIT, or ES_MIN_TRAVEL_LIMIT_HIT\r\n");
+                  /* Execute action function for this state/event combination */
+									//Store event parameter (should be MOTOR_A or MOTOR_B
+									//Turn that motor off
+									//Disable encoder interrupt for that motor if it was a travel limit event
+									//Disable limit switch interrupt for that motor if it was a limit switch event
+                  MakeTransition = false; //We're not leaving ACCEPTING_USER_INPUT_STATE
+									//Consume the event because the master state machine doesn't need to deal with it
                   ReturnEvent.EventType = ES_NO_EVENT;
                   break;
-                // repeat cases as required for relevant events
+             	case ES_MOTOR_BUTTON_UP:
+									puts("Switching ES_MOTOR_BUTTON_UP\r\n");
+                  /* Execute action function for this state/event combination */
+									//Store event parameter (should be MOTOR_A or MOTOR_B)
+									//Turn that motor off
+                  MakeTransition = false; //We're not leaving ACCEPTING_USER_INPUT_STATE
+                  //Consume the event because the master state machine doesn't need to deal with it
+                  ReturnEvent.EventType = ES_NO_EVENT;
+                  break;
+							case ES_MOTOR_FORWARD_DOWN:
+									puts("Switching ES_MOTOR_FORWARD_DOWN\r\n");
+									//Store event parameter (should be MOTOR_A or MOTOR_B)
+									//Guard 1: Other motor is off
+									//Guard 2: Store CAN motor speed locally and only continue if it's in the allowable range
+										/* Execute action function for this state/event combination */
+										//If the motor's limit switch interrupt is disabled, then don't turn the motor on
+										//Else if the motor's encoder interrupt is off, then turn it on and turn the motor on
+										//Else turn the motor on
+										MakeTransition = false; //We're not leaving ACCEPTING_USER_INPUT_STATE
+										//Consume the event because the master state machine doesn't need to deal with it
+										ReturnEvent.EventType = ES_NO_EVENT;
+										break;
+							case ES_MOTOR_BACKWARD_DOWN:
+									puts("Switching ES_MOTOR_BACKWARD_DOWN\r\n");
+									//Store event parameter (should be MOTOR_A or MOTOR_B)
+									//Guard 1: Other motor is off
+									//Guard 2: Store CAN motor speed locally and only continue if it's in the allowable range
+										/* Execute action function for this state/event combination */
+										//If the encoder interrupt is off, don't turn motor on
+										//Else if 1) Turn motor on first 2) Then if that motor's limit switch interrupt is off, turn it on
+										//Else turn motor on
+										MakeTransition = false; //We're not leaving ACCEPTING_USER_INPUT_STATE
+										//Consume the event because the master state machine doesn't need to deal with it
+										ReturnEvent.EventType = ES_NO_EVENT;
+										break;
+							default:
+										puts("Switching spurious event in default case\r\n");
+										//If you get any event that's not handled above, do nothing
+									break;
             }
          }
-         break;
-      // repeat state pattern as required for other states
+         break; //breaks out of ACCEPTING_USER_INPUT_STATE case
     }
+	 
     //   If we are making a state transition
     if (MakeTransition == true)
     {
@@ -147,6 +182,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
 
  Author
      J. Edward Carryer, 2/18/99, 10:38AM
+		 Allison Miller, 1/5/17, 1:45PM
 ****************************************************************************/
 void StartTestingSM ( ES_Event CurrentEvent )
 {
@@ -188,7 +224,7 @@ TestingState_t QueryTestingSM ( void )
  private functions
  ***************************************************************************/
 
-static ES_Event DuringStateOne( ES_Event Event)
+static ES_Event DuringAcceptingUserInputState( ES_Event Event)
 {
     ES_Event ReturnEvent = Event; // assme no re-mapping or comsumption
 
@@ -196,29 +232,37 @@ static ES_Event DuringStateOne( ES_Event Event)
     if ( (Event.EventType == ES_ENTRY) ||
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
-        // implement any entry actions required for this state machine
-        
-        // after that start any lower level machines that run in this state
-        //StartLowerLevelSM( Event );
-        // repeat the StartxxxSM() functions for concurrent state machines
-        // on the lower level
+        /* implement any entry actions required for this state machine */
+        //Check that all encoder and limit switch interrupts are enabled
+			
+        /* after that start any lower level machines that run in this state with StartLowerLevelSM( Event )
+		       repeat the StartxxxSM() functions for concurrent state machines
+					on the lower level
+				*/
+        //No lower level state machines
     }
     else if ( Event.EventType == ES_EXIT )
     {
-        // on exit, give the lower levels a chance to clean up first
-        //RunLowerLevelSM(Event);
-        // repeat for any concurrently running state machines
-        // now do any local exit functionality
+        /* on exit, give the lower levels a chance to clean up first with RunLowerLevelSM(Event);
+				   repeat for any concurrently running state machines
+				*/
+				//No lower level state machines
+			
+        /* now do any local exit functionality */
+				//Turn off motors
+				//Re-enable encoder interrupts
+				//Re-enable limnit switch interrupts
       
     }else
     // do the 'during' function for this state
     {
-        // run any lower level state machine
-        // ReturnEvent = RunLowerLevelSM(Event);
-      
-        // repeat for any concurrent lower level machines
-      
-        // do any activity that is repeated as long as we are in this state
+				/* Run any lower level state machine with ReturnEvent = RunLowerLevelSM(Event);
+					 Repeat for any concurrent lower level machines
+				*/
+				//No lower level state machines
+			
+        /*do any activity that is repeated as long as we are in this state */
+				//None
     }
     // return either Event, if you don't want to allow the lower level machine
     // to remap the current event, or ReturnEvent if you do want to allow it.
