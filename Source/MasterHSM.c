@@ -453,31 +453,36 @@ static ES_Event DuringTesting( ES_Event Event)
     if ( (Event.EventType == ES_ENTRY) ||
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
-        // implement any entry actions required for this state machine
+        /* Implement any entry actions required for this state machine */
+					//Check that all encoder interrupts are enabled
+					//Check that all limit switch interrupts are enabled
         
-        // after that start any lower level machines that run in this state
-        //StartLowerLevelSM( Event );
-				StartTestingSM(Event);
-        // repeat the StartxxxSM() functions for concurrent state machines
-        // on the lower level
+        /* after that start any lower level machines that run in this state*/
+					StartTestingSM(Event);
+        
+				/* repeat the StartxxxSM() functions for concurrent state machines on the lower level*/
+					//None
     }
     else if ( Event.EventType == ES_EXIT )
     {
-        // on exit, give the lower levels a chance to clean up first
-        //RunLowerLevelSM(Event);
-				RunTestingSM(Event);
-        // repeat for any concurrently running state machines
-        // now do any local exit functionality
+        /* On exit, give the lower levels a chance to clean up first */
+					RunTestingSM(Event);
+        /* repeat for any concurrently running state machines */
+					//None
+        /* now do any local exit functionality */
+					//Turn off motors
+					//Re-enable encoder interrupts
+					//Re-enable limit switch interrupts
       
     }else
     // do the 'during' function for this state
     {
-        // run any lower level state machine
-        // ReturnEvent = RunLowerLevelSM(Event);
-				ReturnEvent = RunTestingSM(Event);
-        // repeat for any concurrent lower level machines
-      
-        // do any activity that is repeated as long as we are in this state
+        /* run any lower level state machine */
+					ReturnEvent = RunTestingSM(Event);
+        /* repeat for any concurrent lower level machines */
+					//None
+				/* do any activity that is repeated as long as we are in this state */
+					//None
     }
     // return either Event, if you don't want to allow the lower level machine
     // to remap the current event, or ReturnEvent if you do want to allow it.
