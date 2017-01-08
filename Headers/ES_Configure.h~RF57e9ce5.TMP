@@ -269,11 +269,6 @@ typedef enum {  ES_NO_EVENT = 0,
 								ES_MOTOR_BUTTON_UP,
 								ES_MOTOR_FORWARD_DOWN,
 								ES_MOTOR_BACKWARD_DOWN,
-								ES_CALIBRATION_DISTANCE,
-								ES_CALIBRATION_FORCE,
-								ES_CALIBRATION_FAILURE,
-								ES_BOTH_CALIBRATION_FORCE,
-								ES_BOTH_CALIBRATION_DISTANCE,
                 ES_LOCK,
                 ES_UNLOCK} ES_EventTyp_t ;
 
@@ -322,8 +317,8 @@ typedef enum {  ES_NO_EVENT = 0,
 // Unlike services, any combination of timers may be used and there is no
 // priority in servicing them
 #define TIMER_UNUSED ((pPostFunc)0)
-#define TIMER0_RESP_FUNC PostMasterSM
-#define TIMER1_RESP_FUNC PostMasterSM
+#define TIMER0_RESP_FUNC TIMER_UNUSED
+#define TIMER1_RESP_FUNC TIMER_UNUSED
 #define TIMER2_RESP_FUNC TIMER_UNUSED
 #define TIMER3_RESP_FUNC TIMER_UNUSED
 #define TIMER4_RESP_FUNC TIMER_UNUSED
@@ -347,7 +342,5 @@ typedef enum {  ES_NO_EVENT = 0,
 // These symbolic names should be changed to be relevant to your application 
 
 #define SERVICE0_TIMER 15
-#define checkingFailureTimer 0
-#define displayTimer 1
 
 #endif /* CONFIGURE_H */

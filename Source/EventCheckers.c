@@ -135,8 +135,17 @@ bool Check4Keystroke(void)
 		} else if(key == 's'){
 			KeyboardEvent.EventType = ES_SPINNING;
 			PostMasterSM(KeyboardEvent);
+		} else if(key == 'i'){
+			KeyboardEvent.EventType = ES_TIMEOUT;
+			KeyboardEvent.EventParam = checkingFailureTimer;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'j'){
+			KeyboardEvent.EventType = ES_TIMEOUT;
+			KeyboardEvent.EventParam = displayTimer;
+			PostMasterSM(KeyboardEvent);
 		} 
-		/*Events used in TestingHSM */
+		
+		/* Events used in TestingHSM */
 			else if(key == 'a'){
 			KeyboardEvent.EventType = ES_LIMIT_SWITCH_HIT;
 			PostMasterSM(KeyboardEvent);
@@ -154,6 +163,24 @@ bool Check4Keystroke(void)
 			PostMasterSM(KeyboardEvent);
 		} else if(key == 'h'){
 			KeyboardEvent.EventType = ES_MOTOR_BACKWARD_DOWN;
+			PostMasterSM(KeyboardEvent);
+		} 
+		
+		/* Events used in CalibratingHSM */
+		else if(key == 'k'){
+			KeyboardEvent.EventType = ES_CALIBRATION_DISTANCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'l'){
+			KeyboardEvent.EventType = ES_CALIBRATION_FORCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'm'){
+			KeyboardEvent.EventType = ES_BOTH_CALIBRATION_DISTANCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'n'){
+			KeyboardEvent.EventType = ES_BOTH_CALIBRATION_FORCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'o'){
+			KeyboardEvent.EventType = ES_CALIBRATION_FAILURE;
 			PostMasterSM(KeyboardEvent);
 		} 
 		
