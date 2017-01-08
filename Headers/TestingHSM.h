@@ -10,7 +10,7 @@
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { STATE_ONE_TESTING, STATE_TWO_TESTING } TestingState_t ;
+typedef enum { ACCEPTING_USER_INPUT_STATE } TestingState_t ;
 
 
 // Public Function Prototypes
