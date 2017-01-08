@@ -66,8 +66,9 @@ int main (void)
 	printf("%s %s\n",__TIME__, __DATE__);
 	printf("\n\r\n");
 	InitAll();
+	printf("Initalized Everything\n\r");
 // now initialize the Events and Services Framework and start it running
-  ErrorType = ES_Initialize(ES_Timer_RATE_10mS);
+  ErrorType = ES_Initialize(ES_Timer_RATE_1mS);
   if ( ErrorType == Success ) {
     ErrorType = ES_Run();
   }

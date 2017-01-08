@@ -82,7 +82,9 @@ void PWM0_Init(void)
 	// set the up/down count mode, enable the PWM generator and make
 	// both generator updates locally synchronized to zero count
 	HWREG(PWM0_BASE+ PWM_O_0_CTL) = (PWM_0_CTL_MODE | PWM_0_CTL_ENABLE |
-	PWM_0_CTL_GENAUPD_LS | PWM_0_CTL_GENBUPD_LS);
+	PWM_0_CTL_GENAUPD_LS);
+	PWM0_SetDuty(0);
+	PWM0_SetFreq(200);
 }
 
 void PWM1_Init(void)
@@ -158,7 +160,6 @@ void PWM0_SetDuty(uint8_t Duty)
 		{
 			// to program 0% DC, simply set the action on zero to set the output to zero
 			HWREG( PWM0_BASE+PWM_O_0_GENA) = PWM_0_GENA_ACTZERO_ZERO;
-			printf("made it to the zero case\n\r");
 		}
 		else 
 		{
@@ -174,7 +175,7 @@ void PWM1_SetDuty(uint8_t Duty)
 	if (Duty > 100)
 	{
 		Duty = 0;
-		printf("\r\nWARNING: Duty Cycle out of range. [PWM_Shooter_SetDuty]\r\n");
+		printf("\r\nWARNING: Duty Cycle out of range. [PWM1]\r\n");
 	}
 	if (Duty == 100)
 	{

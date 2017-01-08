@@ -38,12 +38,15 @@
 #define ALL_BITS (0xFF<<2)
 #define BITS0TO7HI 0x00FF
 #define BITS8TO15HI 0xFF00
+
+#define TEMPORARY_ENCODER_B_PIN
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
 */
 //Encoder Input Capture Intializations
 void InitEncoder( void );
+static void TEMPORARY_ENCODER_B_INPUT(void);
 
 //Encoder ISRs
 /*---------------------------- Module Variables ---------------------------*/
@@ -169,6 +172,7 @@ void InitEncoders( void )
 	HWREG(WTIMER0_BASE+TIMER_O_CTL) |= (TIMER_CTL_TAEN | TIMER_CTL_TASTALL| TIMER_CTL_TBEN | TIMER_CTL_TBSTALL);
 	HWREG(WTIMER1_BASE+TIMER_O_CTL) |= (TIMER_CTL_TAEN | TIMER_CTL_TASTALL| TIMER_CTL_TBEN | TIMER_CTL_TBSTALL);
 	//HWREG(WTIMER2_BASE+TIMER_O_CTL) |= (TIMER_CTL_TAEN | TIMER_CTL_TASTALL| TIMER_CTL_TBEN | TIMER_CTL_TBSTALL);
+	TEMPORARY_ENCODER_B_INPUT();
 	
 }
 
@@ -203,12 +207,19 @@ void Encoder1A_ISR( void )
 	
 	//Determine Period and store in Period history array
 	Motor1Period =  ThisTime - LastTime;
-	
-	//Increment EncoderEdges variable
+	#ifdef TEMPORARY_ENCODER_B_PIN
+	if((HWREG(GPIO_PORTD_BASE+(GPIO_O_DATA + (ALL_BITS)))& BIT2HI) == 0)
+	{
+		Encoder1AEdges++;
+	}
+	#else
 	if((HWREG(GPIO_PORTD_BASE+(GPIO_O_DATA + (ALL_BITS)))& BIT0HI) == 0)
 	{
 		Encoder1AEdges++;
 	}
+	#endif
+	//Increment EncoderEdges variable
+	
 	else{
 		Encoder1AEdges--;
 	}
@@ -346,7 +357,23 @@ uint32_t GetMotor1EdgeCount(void)
 	return Encoder1AEdges;
 }
 
+void ResetMotor1EdgeCount(void)
+{
+	Encoder1AEdges = 0;
+}
+
 uint32_t GetMotor2EdgeCount(void)
 {
 	return Encoder2AEdges;
+}
+
+void ResetMotor2EdgeCount(void)
+{
+	Encoder2AEdges = 0;
+}
+static void TEMPORARY_ENCODER_B_INPUT(void){
+	HWREG(GPIO_PORTA_BASE+GPIO_O_DEN) |= BIT2HI;
+	
+	// make pin 4 on Port C into an input
+	HWREG(GPIO_PORTD_BASE+GPIO_O_DIR) &= BIT2LO;
 }

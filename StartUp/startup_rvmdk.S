@@ -84,6 +84,7 @@ __heap_limit
 		EXTERN  Encoder1I_ISR
 		EXTERN  Encoder2A_ISR
 		EXTERN  Encoder2I_ISR
+		EXTERN  CAN_SENDING_ISR
 ;        EXTERN  UARTStdioIntHandler
 
 ;******************************************************************************
@@ -203,11 +204,11 @@ __Vectors
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; Timer 5 subtimer A
         DCD     IntDefaultHandler           ; Timer 5 subtimer B
-        DCD     Encoder1A_ISR           ; Wide Timer 0 subtimer A
-        DCD     Encoder1I_ISR           ; Wide Timer 0 subtimer B
-        DCD     Encoder2A_ISR           ; Wide Timer 1 subtimer A
-        DCD     Encoder2I_ISR           ; Wide Timer 1 subtimer B
-        DCD     IntDefaultHandler           ; Wide Timer 2 subtimer A
+        DCD     Encoder1A_ISR           	; Wide Timer 0 subtimer A
+        DCD     Encoder1I_ISR           	; Wide Timer 0 subtimer B
+        DCD     Encoder2A_ISR           	; Wide Timer 1 subtimer A
+        DCD     Encoder2I_ISR           	; Wide Timer 1 subtimer B
+        DCD     CAN_SENDING_ISR           ; Wide Timer 2 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 2 subtimer B
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer A
         DCD     IntDefaultHandler           ; Wide Timer 3 subtimer B

@@ -56,6 +56,9 @@
 #define ALL_BITS (0xFF<<2)
 #define BITS0TO7HI 0x00FF
 #define BITS8TO15HI 0xFF00
+#define BITS16TO23HI 0xFF0000
+#define BITS24TO31HI 0xFF000000
+
 
 
 #define CAN_PORT GPIO_PORTE_BASE
@@ -69,9 +72,9 @@
 #define CAN_TX_PIN_HI GPIO_PIN_5
 
 #define CAN_BITRATE 500000
-//#define CAN_TEST
+#define CAN_TEST
 
-#define CAN_MESSAGE_LENGTH 8
+#define CAN_MESSAGE_BYTE_LENGTH 2
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -91,7 +94,7 @@ volatile bool errFlag = 0; // error flag
 
 //Create CAN message
 tCANMsgObject msg; // the CAN message object
-uint8_t msgData[CAN_MESSAGE_LENGTH]; // the message data is four bytes long which we can allocate as an int32
+uint8_t msgData[CAN_MESSAGE_BYTE_LENGTH]; // the message data is four bytes long which we can allocate as an int32
 uint8_t *msgDataPtr = (uint8_t *) &msgData; // make a pointer to msgData so we can access individual bytes
 
 
@@ -115,6 +118,7 @@ void InitCAN(void)
 	
     //Set Controller in Intialization mode and clear out all of the messages objects
     HWREG(CAN0_BASE + CAN_O_CTL) = CAN_CTL_INIT;
+		
 
     // Wait for busy bit to clear  
     while(HWREG(CAN0_BASE + CAN_O_IF1CRQ) & CAN_IF1CRQ_BUSY)
@@ -172,32 +176,42 @@ void InitCAN(void)
 	
     //Set the CAN Controller in Normal mode
 	HWREG(CAN0_BASE + CAN_O_CTL) &= ~CAN_CTL_INIT;
+	//Disable Automatic Retransmission
+	HWREG(CAN0_BASE + CAN_O_CTL) |= CAN_CTL_DAR; 
 }
 void CAN_SEND(uint8_t MsgID, uint32_t timestamp, uint32_t distance, uint32_t force, uint32_t velocity)
 {
-    
+		//printf("FORCE: %d\n\r",force);
 		msg.ui32MsgID = MsgID;
 		msg.ui32MsgIDMask = 0;
 		msg.ui32Flags = MSG_OBJ_TX_INT_ENABLE;
 		msg.ui32MsgLen = sizeof(msgData);
-		printf("Size of %d\n\r",sizeof(msgData));
 		msg.pui8MsgData = msgDataPtr;
-		
-    msgDataPtr[0] = timestamp&BITS0TO7HI;
-    msgDataPtr[1] = timestamp&BITS8TO15HI>>8;
-    msgDataPtr[2] = distance&BITS0TO7HI;
-    msgDataPtr[3] = distance&BITS8TO15HI>>8;
-    msgDataPtr[4] = force&BITS0TO7HI;
-    msgDataPtr[5] = force&BITS8TO15HI>>8;
-    msgDataPtr[6] = velocity&BITS0TO7HI;
-    msgDataPtr[7] = velocity&BITS8TO15HI>>8;
+		msgDataPtr[0] = force&BITS0TO7HI;
+    msgDataPtr[1] = force&BITS8TO15HI>>8;
+    //msgDataPtr[0] = timestamp&BITS0TO7HI;
+    //msgDataPtr[1] = timestamp&BITS8TO15HI>>8;
+		//msgDataPtr[2] = timestamp&BITS16TO23HI>>16;
+		//msgDataPtr[3] = timestamp&BITS24TO31HI>>24;
+    //msgDataPtr[2] = distance&BITS0TO7HI;
+    //msgDataPtr[3] = distance&BITS8TO15HI>>8;
+		//msgDataPtr[6] = distance&BITS16TO23HI>>16;
+		//msgDataPtr[7] = distance&BITS24TO31HI>>24;
+    //msgDataPtr[4] = force&BITS0TO7HI;
+    //msgDataPtr[5] = force&BITS8TO15HI>>8;
+		//msgDataPtr[10] = force&BITS16TO23HI>>16;
+		//msgDataPtr[11] = force&BITS24TO31HI>>24;
+    //msgDataPtr[6] = velocity&BITS0TO7HI;
+    //msgDataPtr[7] = velocity&BITS8TO15HI>>8;
+		//msgDataPtr[14] = velocity&BITS16TO23HI>>16;
     
     CANMessageSet(CAN0_BASE, 1, &msg, MSG_OBJ_TYPE_TX);
 }
 
 void CANIntHandler(void) {
 	uint32_t status = CANIntStatus(CAN0_BASE, CAN_INT_STS_CAUSE); // read interrupt status
-
+	//printf("CANIntStatus = %x\n\r",status);
+	//printf("Interupt Cleared");
 	if(status == CAN_INT_INTID_STATUS) { // controller status interrupt
 		status = CANStatusGet(CAN0_BASE, CAN_STS_CONTROL); // read back error bits, do something with them?
 		errFlag = 1;
@@ -205,7 +219,7 @@ void CANIntHandler(void) {
 		status&=(BIT2HI|BIT1HI|BIT0HI);
 		if(status==0x0)
 		{
-			printf("No Error\n\r");
+			//printf("No Error\n\r");
 		}
 		else if(status==0x1)
 		{
@@ -242,6 +256,6 @@ void CANIntHandler(void) {
 		errFlag = 0; // clear any error flags
         
 	} else { // should never happen
-		printf("Unexpected CAN bus interrupt\n");
+		//printf("Unexpected CAN bus interrupt\n\r");
 	}
 }

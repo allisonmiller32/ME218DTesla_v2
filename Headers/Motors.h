@@ -55,4 +55,7 @@ void Motor2Direction(uint8_t direction);
 uint32_t GetMotor1EdgeCount(void);
 uint32_t GetMotor2EdgeCount(void);
 
+void ResetMotor1EdgeCount(void);
+void ResetMotor2EdgeCount(void);
+
 #endif /* Motors_H */
