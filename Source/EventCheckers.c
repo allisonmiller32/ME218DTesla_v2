@@ -34,6 +34,7 @@
 // this test harness for the framework references the serial routines that
 // are defined in ES_Port.c
 #include "ES_Port.h"
+#include "ES_Timers.h"
 
 // include our own prototypes to insure consistency between header & 
 // actual functionsdefinition
@@ -46,6 +47,8 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "inc/hw_gpio.h"
+#include "inc/hw_can.h"
+
 // This is the event checking function sample. It is not intended to be 
 // included in the module. It is only here as a sample to guide you in writing
 // your own event checkers
@@ -113,6 +116,8 @@ bool Check4Lock(void)
 ****************************************************************************/
 bool Check4Keystroke(void)
 {
+	static uint32_t LastEncoderCount;
+	static uint32_t Frequency = 200;
   if ( IsNewKeyReady() ) // new key waiting?
   {
 //    ES_Event ThisEvent;
@@ -142,35 +147,43 @@ bool Check4Keystroke(void)
 		
 		// Ernesto
 		else if(key == '1'){
-			PWM1_SetDuty(50);
+			PWM0_SetDuty(50);
 			printf("Motor Duty: 50 percent\n\r");
 		}
 		else if(key == '2'){
-			PWM1_SetDuty(0);
+			PWM0_SetDuty(0);
 			printf("Motor Duty: 0 percent\n\r");
 		}
 		else if(key == '3'){
-			Motor1Enable(true);
-			printf("Motor Enabled\n\r");
+			Frequency +=10;
+			PWM0_SetFreq(Frequency);
+			printf("Motor Frequency = %d\n\r",Frequency);
 		}
 		else if(key == '4'){
-			Motor1Enable(false);
-			printf("Motor Disabled\n\r");
+			Frequency -=10;
+			PWM0_SetFreq(Frequency);
+			printf("Motor Frequency = %d\n\r",Frequency);
 		}
 		else if(key == '5'){
 			Motor1Direction(MOTOR1_FORWARD);
-			printf("Motor Direction: Forward\n\r");
+			printf("Motor0 Direction: Forward\n\r");
 		}
 		else if(key == '6'){
 			Motor1Direction(MOTOR1_REVERSE);
-			printf("Motor Direction: Reverse\n\r");
+			printf("Motor0 Direction: Reverse\n\r");
 		}
 		else if(key == '7'){
-			printf("AFS for Port D = %x",HWREG(GPIO_PORTD_BASE+GPIO_O_AFSEL));
+			Motor1Enable(true);
+			printf("Motor1 Enabled\n\r");
 		}
-//		else if(key == '8'){
-//			Motor1Enable(false);
-//		}		
+		else if(key == '8'){
+			Motor1Enable(false);
+			printf("Motor1 Disabled\n\r");
+		}
+		else if(key == '9'){
+			PWM1_SetDuty(50);
+			printf("Motor1 Duty: 50 percent\n\r");
+		}		
 
 		
 //    PostMapKeys( ThisEvent );
