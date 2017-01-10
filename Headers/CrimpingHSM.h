@@ -10,7 +10,7 @@
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { STATE_ONE_CRIMPING, STATE_TWO_CRIMPING } CrimpingState_t ;
+typedef enum { WAITING_FOR_CRIMP_BUTTON_STATE, CRIMPING_STATE, REPORTING_CRIMP_QUALITY_STATE, PREPARING_FOR_NEXT_CRIMP_STATE } CrimpingState_t ;
 
 
 // Public Function Prototypes

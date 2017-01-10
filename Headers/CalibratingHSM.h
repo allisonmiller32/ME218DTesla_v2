@@ -10,7 +10,7 @@
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { STATE_ONE_CALIBRATING, STATE_TWO_CALIBRATING } CalibratingState_t ;
+typedef enum { DRIVING_MOTORS_STATE, DISPLAYING_RESULT_STATE } CalibratingState_t ;
 
 
 // Public Function Prototypes

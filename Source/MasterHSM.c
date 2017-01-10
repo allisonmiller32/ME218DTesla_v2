@@ -9,6 +9,10 @@
    This is the master state machine in the hierarchical architecture for the
 	 ME 218D automated crimping machine for Tesla
 
+   Notes:
+  -Original code structure written by J. Edward Carryer of Stanford University
+  -Code modified for crimping machine by Allison Miller
+
  Notes
 
  History
@@ -202,7 +206,8 @@ ES_Event RunMasterSM( ES_Event CurrentEvent )
 							switch (CurrentEvent.EventType)
 							{
 //								 puts("Switching events in CALIBRATING in MasterHSM\r\n");
-								 case ES_EXIT_BUTTON : //If event is event one !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+								 case ES_EXIT_BUTTON:
+									 //If event is event one !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 										// Execute action function for state one : event one
 										NextState = ZEROING_MOTORS;//Decide what the next state will be
 										// for internal transitions, skip changing MakeTransition
@@ -213,7 +218,19 @@ ES_Event RunMasterSM( ES_Event CurrentEvent )
 										// level state machine
 										ReturnEvent.EventType = ES_NO_EVENT;
 										break;
-									// repeat cases as required for relevant events
+								 case ES_TIMEOUT:
+										// Execute action function for state one : event one
+										if(CurrentEvent.EventParam == checkingFailureTimer || CurrentEvent.EventParam == displayTimer){
+											NextState = ZEROING_MOTORS;//Decide what the next state will be
+											// for internal transitions, skip changing MakeTransition
+											MakeTransition = true; //mark that we are taking a transition
+											// if transitioning to a state with history change kind of entry
+											EntryEventKind.EventType = ES_ENTRY;
+											// optionally, consume or re-map this event for the upper
+											// level state machine
+											ReturnEvent.EventType = ES_NO_EVENT;
+										}
+										break;
 							}
 					 } else {
 //						 puts("DuringCalibrating returned ES_NO_EVENT\r\n");
@@ -232,7 +249,7 @@ ES_Event RunMasterSM( ES_Event CurrentEvent )
 					 {
 							switch (CurrentEvent.EventType)
 							{
-								 case ES_EXIT_BUTTON : //If event is event one
+								case ES_EXIT_BUTTON:
 										// Execute action function for state one : event one
 										NextState = ZEROING_MOTORS;//Decide what the next state will be
 										// for internal transitions, skip changing MakeTransition
@@ -243,7 +260,6 @@ ES_Event RunMasterSM( ES_Event CurrentEvent )
 										// level state machine
 										ReturnEvent.EventType = ES_NO_EVENT;
 										break;
-									// repeat cases as required for relevant events
 							}
 					 }
          break;

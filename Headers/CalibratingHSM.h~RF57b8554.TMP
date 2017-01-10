@@ -4,20 +4,20 @@
  3/17/09  Fixed prototpyes to use Event_t
  ****************************************************************************/
 
-#ifndef WaitingForModeSelect_H
-#define WaitingForModeSelect_H
+#ifndef Calibrating_H
+#define Calibrating_H
 
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { WAITING_STATE } WaitingState_t ;
+typedef enum { STATE_ONE_CALIBRATING, STATE_TWO_CALIBRATING } CalibratingState_t ;
 
 
 // Public Function Prototypes
 
-ES_Event RunWaitingForModeSelectSM( ES_Event CurrentEvent );
-void StartWaitingForModeSelectSM ( ES_Event CurrentEvent );
-WaitingState_t QueryWaitingForModeSelectSM ( void );
+ES_Event RunCalibratingSM( ES_Event CurrentEvent );
+void StartCalibratingSM ( ES_Event CurrentEvent );
+CalibratingState_t QueryCalibratingSM ( void );
 
-#endif /*WaitingForModeSelect_H */
+#endif /*Calibrating_H */
 
