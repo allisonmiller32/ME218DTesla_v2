@@ -93,9 +93,17 @@ ES_Event RunCrimpingSM( ES_Event CurrentEvent )
                   //Guard: Store CAN speed/distance/forces for this crimp and only run if these are i the allowable range
                   //Set needCANInfo = false
                   NextState = CRIMPING_STATE; //Decide what the next state will be
-                  MakeTransition = true; //mark that we are taking a transition to a new state
+                  MakeTransition = true; //We're transitioning out of WAITING_FOR_CRIMP_BUTTON_STATE
                   //Consume the event because the upper-level master state machine doesn't need to deal with it
                   ReturnEvent.EventType = ES_NO_EVENT;
+                  break;
+               case ES_TIMEOUT :
+                  //If the timeout came from checkingFailureTimer
+                  if(CurrentEvent.EventParam == checkingFailureTimer){
+                    //Consume the event because we don't want to leave crimping mode based off an old checkingFailureTimer firing here
+                    ReturnEvent.EventType = ES_NO_EVENT;
+                  }
+                  MakeTransition = false; //We're not leaving WAITING_FOR_CRIMPING_BUTTON_STATE as a result of this event
                   break;
 
             }
