@@ -10,7 +10,7 @@
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { STATE_ONE_WAITING, STATE_TWO_WAITING } WaitingState_t ;
+typedef enum { WAITING_STATE } WaitingState_t ;
 
 
 // Public Function Prototypes

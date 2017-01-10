@@ -1,38 +1,23 @@
 /****************************************************************************
  Module
-   HSMTemplate.c
+   WaitingForModeSelect.c
 
  Revision
-   2.0.1
+   1.0
 
  Description
-   This is a template file for implementing state machines.
+   -This is a placeholder used when the crimping machine is waiting for user
+   input for what mode it should enter next.
 
- Notes
+  Notes:
+    -Original code structure written by J. Edward Carryer of Stanford University
+    -Code modified for crimping machine by Allison Miller
 
  History
  When           Who     What/Why
  -------------- ---     --------
- 02/07/13 21:00 jec      corrections to return variable (should have been
-                         ReturnEvent, not CurrentEvent) and several EV_xxx
-                         event names that were left over from the old version
- 02/08/12 09:56 jec      revisions for the Events and Services Framework Gen2
- 02/13/10 14:29 jec      revised Start and run to add new kind of entry function
-                         to make implementing history entry cleaner
- 02/13/10 12:29 jec      added NewEvent local variable to During function and
-                         comments about using either it or Event as the return
- 02/11/10 15:54 jec      more revised comments, removing last comment in during
-                         function that belongs in the run function
- 02/09/10 17:21 jec      updated comments about internal transitions on During funtion
- 02/18/09 10:14 jec      removed redundant call to RunLowerlevelSM in EV_Entry
-                         processing in During function
- 02/20/07 21:37 jec      converted to use enumerated type for events & states
- 02/13/05 19:38 jec      added support for self-transitions, reworked
-                         to eliminate repeated transition code
- 02/11/05 16:54 jec      converted to implment hierarchy explicitly
- 02/25/03 10:32 jec      converted to take a passed event parameter
- 02/18/99 10:19 jec      built template from MasterMachine.c
- 02/14/99 10:34 jec      Began Coding
+ 12/15/16       jec     Template obtained from Stanford/Ed Carryer
+ 01/08/17 1:40  amm     Template converted to implement WaitingForModeSelect mode structure
 ****************************************************************************/
 /*----------------------------- Include Files -----------------------------*/
 // Basic includes for a program using the Events and Services Framework
@@ -48,14 +33,14 @@
 // define constants for the states for this machine
 // and any other local defines
 
-#define ENTRY_STATE STATE_ONE_WAITING
+#define ENTRY_STATE WAITING_STATE
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine, things like during
    functions, entry & exit functions.They should be functions relevant to the
    behavior of this state machine
 */
-static ES_Event DuringStateOne( ES_Event Event);
+static ES_Event DuringWaitingState( ES_Event Event);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well
@@ -88,29 +73,20 @@ ES_Event RunWaitingForModeSelectSM( ES_Event CurrentEvent )
 
    switch ( CurrentState )
    {
-       case STATE_ONE_WAITING :       // If current state is state one
-				 puts("In STATE_ONE_WAITING in the run mode of WaitingForModeSelect.c (lower level SM)\r\n");
+       case WAITING_STATE :
+				 puts("In WAITING_STATE in the run mode of WaitingForModeSelect.c (lower level SM)\r\n");
          // Execute During function for state one. ES_ENTRY & ES_EXIT are
          // processed here allow the lower level state machines to re-map
          // or consume the event
-         CurrentEvent = DuringStateOne(CurrentEvent);
+         CurrentEvent = DuringWaitingState(CurrentEvent);
          //process any events
          if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_LOCK : //If event is event one
-                  // Execute action function for state one : event one
-                  NextState = STATE_TWO_WAITING;//Decide what the next state will be
-                  // for internal transitions, skip changing MakeTransition
-                  MakeTransition = true; //mark that we are taking a transition
-                  // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
-                  // optionally, consume or re-map this event for the upper
-                  // level state machine
-                  ReturnEvent.EventType = ES_NO_EVENT;
-                  break;
-                // repeat cases as required for relevant events
+							//There are no events that are handled in this state
+							default:
+								break;
             }
          }
          break;
@@ -188,7 +164,7 @@ WaitingState_t QueryTemplateSM ( void )
  private functions
  ***************************************************************************/
 
-static ES_Event DuringStateOne( ES_Event Event)
+static ES_Event DuringWaitingState( ES_Event Event)
 {
     ES_Event ReturnEvent = Event; // assme no re-mapping or comsumption
 
@@ -196,29 +172,25 @@ static ES_Event DuringStateOne( ES_Event Event)
     if ( (Event.EventType == ES_ENTRY) ||
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
-        // implement any entry actions required for this state machine
-        
-        // after that start any lower level machines that run in this state
-        //StartLowerLevelSM( Event );
-        // repeat the StartxxxSM() functions for concurrent state machines
-        // on the lower level
+        /* implement any entry actions required for this state machine */
+          //None
+        /* after that start any lower level machines that run in this state using StartLowerLevelSM(Event); */
+          //None
     }
     else if ( Event.EventType == ES_EXIT )
     {
-        // on exit, give the lower levels a chance to clean up first
-        //RunLowerLevelSM(Event);
-        // repeat for any concurrently running state machines
-        // now do any local exit functionality
+        /* on exit, give the lower levels a chance to clean up first using RunLowerLevelSM(Event); */
+          //None
+        /* now do any local exit functionality */
+          //None
       
     }else
     // do the 'during' function for this state
     {
-        // run any lower level state machine
-        // ReturnEvent = RunLowerLevelSM(Event);
-      
-        // repeat for any concurrent lower level machines
-      
-        // do any activity that is repeated as long as we are in this state
+        /* run any lower level state machines using ReturnEvent = RunLowerLevelSM(Event); */
+          //None
+        /* do any activity that is repeated as long as we are in this state */
+          //None
     }
     // return either Event, if you don't want to allow the lower level machine
     // to remap the current event, or ReturnEvent if you do want to allow it.

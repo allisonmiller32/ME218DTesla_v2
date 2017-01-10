@@ -3,7 +3,7 @@
    TestingHSM.c
 
  Revision
-   2.0.1
+   1.0
 
  Description
    -Controls the program flow during the testing state of the crimping machine.
@@ -14,7 +14,9 @@
 	 controlled with forward/backward buttons, which must be pressed and held down
 	 for a motor to move.
 
- Notes
+  Notes:
+    -Original code structure written by J. Edward Carryer of Stanford University
+    -Code modified for crimping machine by Allison Miller
 
  History
  When           Who     What/Why
@@ -97,7 +99,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
 							case ES_LIMIT_SWITCH_HIT: 
 							case ES_MAX_TRAVEL_LIMIT_HIT:
 							case ES_MIN_TRAVEL_LIMIT_HIT:
-									puts("Switching ES_LIMIT_SWITCH_HIT, ES_MAX_TRAVEL_LIMIT_HIT, or ES_MIN_TRAVEL_LIMIT_HIT\r\n");
+									puts("In ES_LIMIT_SWITCH_HIT, || ES_MAX_TRAVEL_LIMIT_HIT || ES_MIN_TRAVEL_LIMIT_HIT in ACCEPTING_USER_INPUT_STATE in TestingHSM.c\r\n");
                   /* Execute action function for this state/event combination */
 									//Store event parameter (should be MOTOR_A or MOTOR_B
 									//Turn that motor off
@@ -108,7 +110,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
                   ReturnEvent.EventType = ES_NO_EVENT;
                   break;
              	case ES_MOTOR_BUTTON_UP:
-									puts("Switching ES_MOTOR_BUTTON_UP\r\n");
+									puts("In ES_MOTOR_BUTTON_UP in ACCEPTING_USER_INPUT_STATE in TestingHSM.c\r\n");
                   /* Execute action function for this state/event combination */
 									//Store event parameter (should be MOTOR_A or MOTOR_B)
 									//Turn that motor off
@@ -117,7 +119,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
                   ReturnEvent.EventType = ES_NO_EVENT;
                   break;
 							case ES_MOTOR_FORWARD_DOWN:
-									puts("Switching ES_MOTOR_FORWARD_DOWN\r\n");
+									puts("In ES_MOTOR_FORWARD_DOWN in ACCEPTING_USER_INPUT_STATE in TestingHSM.c\r\n");
 									//Store event parameter (should be MOTOR_A or MOTOR_B)
 									//Guard 1: Other motor is off
 									//Guard 2: Store CAN motor speed locally and only continue if it's in the allowable range
@@ -130,7 +132,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
 										ReturnEvent.EventType = ES_NO_EVENT;
 										break;
 							case ES_MOTOR_BACKWARD_DOWN:
-									puts("Switching ES_MOTOR_BACKWARD_DOWN\r\n");
+									puts("In ES_MOTOR_BACKWARD_DOWN in ACCEPTING_USER_INPUT_STATE in TestingHSM.c\r\n");
 									//Store event parameter (should be MOTOR_A or MOTOR_B)
 									//Guard 1: Other motor is off
 									//Guard 2: Store CAN motor speed locally and only continue if it's in the allowable range
@@ -143,7 +145,7 @@ ES_Event RunTestingSM( ES_Event CurrentEvent )
 										ReturnEvent.EventType = ES_NO_EVENT;
 										break;
 							default:
-										puts("Switching spurious event in default case\r\n");
+										puts("Switching spurious event in default case in ACCEPTING_USER_INPUT_STATE in TestingHSM.c\r\n");
 										//If you get any event that's not handled above, do nothing
 									break;
             }

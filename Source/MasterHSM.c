@@ -9,6 +9,10 @@
    This is the master state machine in the hierarchical architecture for the
 	 ME 218D automated crimping machine for Tesla
 
+   Notes:
+  -Original code structure written by J. Edward Carryer of Stanford University
+  -Code modified for crimping machine by Allison Miller
+
  Notes
 
  History

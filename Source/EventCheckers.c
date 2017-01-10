@@ -183,6 +183,28 @@ bool Check4Keystroke(void)
 			KeyboardEvent.EventType = ES_CALIBRATION_FAILURE;
 			PostMasterSM(KeyboardEvent);
 		} 
+
+		/* Events used in CrimpingHSM */
+		else if(key == 'p'){
+			KeyboardEvent.EventType = ES_CRIMP_BUTTON_DOWN;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'q'){
+			KeyboardEvent.EventType = ES_CRIMP_BUTTON_UP;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'u'){
+			KeyboardEvent.EventType = ES_CRIMP_DISTANCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'v'){
+			KeyboardEvent.EventType = ES_CRIMP_FORCE;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'w'){
+			KeyboardEvent.EventType = ES_ENCODER_HOMED;
+			PostMasterSM(KeyboardEvent);
+		} else if(key == 'x'){
+			KeyboardEvent.EventType = ES_READY_FOR_NEW_CRIMP;
+			PostMasterSM(KeyboardEvent);
+		} 
+
 		
 		// Ernesto
 		else if(key == '1'){

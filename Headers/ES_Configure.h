@@ -274,6 +274,12 @@ typedef enum {  ES_NO_EVENT = 0,
 								ES_CALIBRATION_FAILURE,
 								ES_BOTH_CALIBRATION_FORCE,
 								ES_BOTH_CALIBRATION_DISTANCE,
+								ES_CRIMP_BUTTON_DOWN,
+								ES_CRIMP_BUTTON_UP,
+								ES_CRIMP_DISTANCE,
+								ES_CRIMP_FORCE,
+								ES_ENCODER_HOMED,
+								ES_READY_FOR_NEW_CRIMP,
                 ES_LOCK,
                 ES_UNLOCK} ES_EventTyp_t ;
 
